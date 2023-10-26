@@ -140,6 +140,8 @@ public class PrimGraph<T> implements Graph<T>{
             T vertex = vertexes.get(i);
             newHM.put(vertex, i);
         }
+
+        vertices = newHM;
     }
 
     private class IndexComparator implements Comparator<T> {
