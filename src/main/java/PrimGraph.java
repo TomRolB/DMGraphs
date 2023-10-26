@@ -2,9 +2,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-// Realizar la implementación de la interfaz Graph, para grafos no dirigidos y ponderados
-// con una Matriz de costos. Calcular el orden de cada operación.
-// Implementar el algoritmo de Prim.
+//Implement the Graph interface, using a non-directed and ponderated graph
+//Use a cost Matrix. Calculate each and every operation order (Big "O" notation)
+//Implement Prim algorithm as a primitive from the class.
+
 public class PrimGraph<T> implements Graph<T>{
     private final int size; //Matrix row and column size
     private final Comparator<T> comparator; //Comparator we will be using with Prim algorithm
@@ -23,38 +24,42 @@ public class PrimGraph<T> implements Graph<T>{
     }
     //Edges should have values greater than or equal to 0, so we use -1 to represent that there is no edge between v and w
     private Map<T,Integer> vertices = new HashMap<>();//Map with pairs of vertices and indices
-    private int N = 0; //Graph size
-    private int alpha = 0;
+    private int N = 0; //Vertices amount
+    private int alpha = 0;//Edges amount
+    private int fixPosition = 0;//Position we will be shifting whenever adding a vertex
+
     @Override
     public void addVertex(T x) {
         if (x == null) return;
-        vertices.put(x,N++);
-    }
+        vertices.put(x,fixPosition++);
+        N++;
+    }// amortized O(1). Whenever needs to do the resize() it becomes an O(N^2)
 
     @Override
     public void removeVertex(T x) {
         if(x == null) return;
         if(!vertices.containsKey(x)) return;
         vertices.remove(x); N--;
-    }
+        removeAllEdges(x);
+    }//O(1)
 
     @Override
     public boolean hasVertex(T v) {
         return vertices.containsKey(v);
-    }
+    } //O(1)
 
     @Override
     public List<T> getVertexes() {
-        return vertices.keySet().stream().toList();
+        return vertices.keySet().stream().toList(); //O(1)
     }
 
     @Override
     public void addEdge(T v, T w, int weight) {
         if(!vertices.containsKey(v) || !vertices.containsKey(w) || weight <0) return;
         int i = vertices.get(v), j = vertices.get(w);
-        costMatrix[i][j] = costMatrix[j][i] = weight;
+        costMatrix[i][j] = costMatrix[j][i] = weight; //Change costMatrix values in it.
         alpha++;
-    }
+    } //O(1)
 
     @Override
     public void removeEdge(T v, T w) {
@@ -62,7 +67,7 @@ public class PrimGraph<T> implements Graph<T>{
         int i = vertices.get(v), j = vertices.get(w);
         costMatrix[i][j] = costMatrix[j][i] = -1; //Change costMatrix values in it.
         alpha--;
-    }
+    } //O(1)
 
 
     @Override
@@ -70,31 +75,28 @@ public class PrimGraph<T> implements Graph<T>{
         if(!vertices.containsKey(v) || !vertices.containsKey(w)) return false;
         int i = vertices.get(v), j = vertices.get(w);
         return costMatrix[i][j] == costMatrix[j][i] && costMatrix[i][j] >=0;
-    }
+    } // O(1)
 
     @Override
     public int order() {
         return N;
-    }
+    } //O(1)
 
     @Override
-    public int alpha() {return alpha;}
+    public int alpha() {return alpha;}//O(1)
 
     @Override
     public List<T> getAdjacencyList(T v) {
-
+        if(!vertices.containsKey(v)) return null;
         int i = vertices.get(v);
         List<T> adjacencyList = new ArrayList<>(N);
         List<T> vertexList = getVertexes();
         for (T w: vertexList) {
             int j = vertices.get(w);
-            if(costMatrix[i][j] >=0) adjacencyList.add(w);
+            if(costMatrix[i][j] >0) adjacencyList.add(w);
         }
         return adjacencyList;
-    }
-    //[[0,2,-1],
-    // [2,0,4],
-    // [-1,4,0] ]
+    } //O(N)
 
     private void resize(boolean upsize) {
         // To avoid creating completely new matrices, we have a fixed
