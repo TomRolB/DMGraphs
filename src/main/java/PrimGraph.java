@@ -8,6 +8,7 @@ import java.util.*;
 public class PrimGraph<T> implements Graph<T>{
     private final int size; //Matrix row and column size
     private final Comparator<T> comparator; //Comparator we will be using with Prim algorithm
+    private final IndexComparator idxComp = new IndexComparator(); // Comparator used to resize
     private int[][] costMatrix; //Cost Matrix
 
     public PrimGraph(@NotNull Comparator<T> comparator){
@@ -100,17 +101,15 @@ public class PrimGraph<T> implements Graph<T>{
         // array size, which is not fully used. Instead, we use more or
         // less of it as size increases or increases.
 
-        // If the size of the array is not enough, this method expands it.
-
-        // If the size of the array is too large compared to the actual
-        // portion used, we downsize it.
-
         int arraySize = costMatrix.length;
         int[][] result;
 
         if (upsize) {
+            // If the size of the array is not enough, this method expands it.
             result = new int[arraySize * 2][arraySize * 2];
         } else {
+            // If the size of the array is too large compared to the actual
+            // portion used, we downsize it.
             result = new int[arraySize / 2][arraySize / 2];
         }
 
@@ -130,6 +129,22 @@ public class PrimGraph<T> implements Graph<T>{
         }
 
         costMatrix = result;
+
+        // Now, since the matrix was modified, we need to create the hashmap again
+        List<T> vertexes = vertices.keySet().stream().sorted(idxComp).toList();
+        Map<T,Integer> newHM = new HashMap<>(upsize? arraySize * 2 : arraySize / 2);
+
+        for (int i = 0; i < vertexes.size(); i++) {
+            T vertex = vertexes.get(i);
+            newHM.put(vertex, i);
+        }
+    }
+
+    private class IndexComparator implements Comparator<T> {
+        @Override
+        public int compare(T o1, T o2) {
+            return Integer.compare(vertices.get(o1), vertices.get(o2));
+        }
     }
 
 }
