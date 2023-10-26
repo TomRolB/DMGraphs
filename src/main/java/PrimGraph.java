@@ -1,9 +1,26 @@
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Comparator;
 import java.util.List;
 
 // Realizar la implementación de la interfaz Graph, para grafos no dirigidos y ponderados
 // con una Matriz de costos. Calcular el orden de cada operación.
 // Implementar el algoritmo de Prim.
 public class PrimGraph<T> implements Graph<T>{
+    private final int size;
+    private final Comparator<T> comparator;
+    private int[][] costMatrix;
+
+    public PrimGraph(@NotNull Comparator<T> comparator){
+        this.comparator = comparator;
+        this.size = 10;
+        this.costMatrix = new int[size][size];
+    }
+    public PrimGraph(@NotNull Comparator<T> comparator, int size){
+        this.comparator = comparator;
+        this.size = size;
+        this.costMatrix = new int[size][size];
+    }
 
     @Override
     public void addVertex(T x) {
