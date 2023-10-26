@@ -1,41 +1,42 @@
 import java.util.List;
 
-// Realizar la implementación de la interfaz Graph, para grafos no dirigidos y ponderados con una Matriz de costos. Calcular el orden de cada operación.
+// Realizar la implementación de la interfaz Graph, para grafos no dirigidos y ponderados
+// con una Matriz de costos. Calcular el orden de cada operación.
 // Implementar el algoritmo de Prim.
-public class PrimGraph implements Graph{
+public class PrimGraph<T> implements Graph<T>{
 
     @Override
-    public void addVertex(Object x) {
+    public void addVertex(T x) {
 
     }
 
     @Override
-    public void removeVertex(Object x) {
+    public void removeVertex(T x) {
 
     }
 
     @Override
-    public boolean hasVertex(Object v) {
+    public boolean hasVertex(T v) {
         return false;
     }
 
     @Override
-    public List getVertexes() {
+    public List<T> getVertexes() {
         return null;
     }
 
     @Override
-    public void addEdge(Object v, Object w) {
+    public void addEdge(T v, T w) {
 
     }
 
     @Override
-    public void removeEdge(Object v, Object w) {
+    public void removeEdge(T v, T w) {
 
     }
 
     @Override
-    public boolean hasEdge(Object v, Object w) {
+    public boolean hasEdge(T v, T w) {
         return false;
     }
 
@@ -50,7 +51,7 @@ public class PrimGraph implements Graph{
     }
 
     @Override
-    public List getAdjacencyList(Object v) {
+    public List<T> getAdjacencyList(T v) {
         return null;
     }
 }
