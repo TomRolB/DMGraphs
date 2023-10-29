@@ -33,14 +33,16 @@ public class PrimGraph<T> implements Graph<T>{
         if (x == null) return;
         vertices.put(x,fixPosition++);
         N++;
+        if (fixPosition == costMatrix.length) resize(true);
     }// amortized O(1). Whenever needs to do the resize() it becomes an O(N^2)
 
     @Override
     public void removeVertex(T x) {
         if(x == null) return;
         if(!vertices.containsKey(x)) return;
-        vertices.remove(x); N--;
         removeAllEdges(x);
+        vertices.remove(x); N--;
+        if (fixPosition == costMatrix.length / 4) resize(false);
     }//O(1)
 
     @Override
@@ -145,7 +147,10 @@ public class PrimGraph<T> implements Graph<T>{
     }
 
     private void removeAllEdges(T x) {
-
+        int i = vertices.get(x);
+        for (int j = 0; j < costMatrix.length; j++) {
+            costMatrix[i][j] = costMatrix[j][i] = -1;
+        }
     }
 
 
