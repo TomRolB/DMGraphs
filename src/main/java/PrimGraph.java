@@ -144,6 +144,12 @@ public class PrimGraph<T> implements Graph<T>{
         vertices = newHM;
     }
 
+    private void removeAllEdges(T x) {
+
+    }
+
+
+
     private class IndexComparator implements Comparator<T> {
         @Override
         public int compare(T o1, T o2) {
