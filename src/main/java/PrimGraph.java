@@ -34,7 +34,7 @@ public class PrimGraph<T> implements Graph<T>{
         vertices.put(x,fixPosition++);
         N++;
         if (fixPosition == costMatrix.length) resize(true);
-    }// amortized O(1). Whenever needs to do the resize() it becomes an O(N^2)
+    }// amortized O(1). Whenever needs to do the resize() it becomes an O(N^2) algorithm
 
     @Override
     public void removeVertex(T x) {
@@ -43,7 +43,7 @@ public class PrimGraph<T> implements Graph<T>{
         removeAllEdges(x);
         vertices.remove(x); N--;
         if (fixPosition == costMatrix.length / 4) resize(false);
-    }//O(1)
+    }//amortized O(N). Whenever needs to do the resize() it becomes an O(N^2) algorithm
 
     @Override
     public boolean hasVertex(T v) {
