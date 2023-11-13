@@ -12,6 +12,7 @@ public class PrimGraph<T> implements Graph<T>{
     private final Comparator<T> comparator; //Comparator we will be using with Prim algorithm
     private final IndexComparator idxComp = new IndexComparator(); // Comparator used to resize
     private int[][] costMatrix; //Cost Matrix
+    private final int noEdge = 2147483647;
 
     public PrimGraph(@NotNull Comparator<T> comparator){
         this.comparator = comparator;
@@ -104,7 +105,7 @@ public class PrimGraph<T> implements Graph<T>{
         List<T> vertexList = getVertexes();
         for (T w: vertexList) {
             int j = vertices.get(w);
-            if(costMatrix[i][j] >0) adjacencyList.add(w);
+            if(costMatrix[i][j] >0 && costMatrix[i][j] < noEdge) adjacencyList.add(w);
         }
         return adjacencyList;
     } //O(N)
@@ -153,22 +154,24 @@ public class PrimGraph<T> implements Graph<T>{
         }
 
         vertices = newHM;
-    }
+    } //O(N^2)
 
     private void removeAllEdges(T x) {
         int i = vertices.get(x);
         for (int j = 0; j < costMatrix.length; j++) {
-            costMatrix[i][j] = costMatrix[j][i] = 2147483647;
+            if(costMatrix[i][j] != 2147483647){alpha--;}
+            costMatrix[i][j] = costMatrix[j][i] = 2147483647; //O(1)
+
         }
     }
 
     public PrimGraph<T> prim () {
         PrimGraph<T> newGraph = new PrimGraph<>(this.comparator, costMatrix.length);
-        Map<Integer, T> reversedHashMap = vertices.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue,Map.Entry::getKey));
-        for (int i= 0; i < N; i++) {
-            newGraph.addVertex(reversedHashMap.get(i));
+        Map<Integer, T> reversedHashMap = vertices.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        for (int i = 0; i < N; i++) { // O(N)
+            newGraph.addVertex(reversedHashMap.get(i)); // O(1)
         }
-        HashSet<T> v = new HashSet<>(List.copyOf(getVertexes()));
+        HashSet<T> v = new HashSet<>(List.copyOf(getVertexes())); //O(N)
         HashSet<T> x = new HashSet<>();
 
         int index = 1;
@@ -181,7 +184,7 @@ public class PrimGraph<T> implements Graph<T>{
             int arrival = 0; // column index
             for (T node : x) { //O(N)
                 int row = vertices.get(node);
-                for (int i = 0; i < N; i++) {
+                for (int i = 0; i < N; i++) { //O(N)
                     if (costMatrix[row][i] < min && i != row && !x.contains(reversedHashMap.get(i))) {
                         departure = row;
                         arrival = i;
@@ -193,12 +196,13 @@ public class PrimGraph<T> implements Graph<T>{
             newGraph.addEdge(reversedHashMap.get(arrival), reversedHashMap.get(departure), min);
         }
         return newGraph;
-    }
+    } //O(N^3)
+
 
     private class IndexComparator implements Comparator<T> {
         @Override
         public int compare(T o1, T o2) {
-            return Integer.compare(vertices.get(o1), vertices.get(o2));
+            return Integer.compare(vertices.get(o1), vertices.get(o2)); // O(1)
         }
     }
 

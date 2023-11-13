@@ -220,6 +220,7 @@ class PrimGraphTest {
         assertTrue(MST.hasEdge("4","6"));
         assertTrue(MST.hasEdge("4","3"));
         assertTrue(MST.hasEdge("3","5"));
+        assertEquals(MST.alpha(),MST.order()-1);
     }
 
     @Test
