@@ -13,6 +13,12 @@ public class PrimGraph<T> implements Graph<T>{
     private final IndexComparator idxComp = new IndexComparator(); // Comparator used to resize
     private int[][] costMatrix; //Cost Matrix
 
+    //Edges should have values greater than or equal to 0, so we use -1 to represent that there is no edge between v and w
+    private Map<T,Integer> vertices = new HashMap<>();//Map with pairs of vertices and indices
+    private int N = 0; //Vertices amount
+    private int alpha = 0;//Edges amount
+    private int fixPosition = 0;//Position we will be shifting whenever adding a vertex
+
     public PrimGraph(@NotNull Comparator<T> comparator){
         this.comparator = comparator;
         this.size = 10;
@@ -23,11 +29,7 @@ public class PrimGraph<T> implements Graph<T>{
         this.size = size;
         this.costMatrix = new int[size][size];
     }
-    //Edges should have values greater than or equal to 0, so we use -1 to represent that there is no edge between v and w
-    private Map<T,Integer> vertices = new HashMap<>();//Map with pairs of vertices and indices
-    private int N = 0; //Vertices amount
-    private int alpha = 0;//Edges amount
-    private int fixPosition = 0;//Position we will be shifting whenever adding a vertex
+
 
     @Override
     public void addVertex(T x) {
@@ -161,6 +163,55 @@ public class PrimGraph<T> implements Graph<T>{
         public int compare(T o1, T o2) {
             return Integer.compare(vertices.get(o1), vertices.get(o2));
         }
+    }
+
+    public Graph<T> getMST() {
+        if(N == 0) return null;
+        // Uses Prim's algorithm to create a graph representing
+        // the Minimum Spanning Tree of this graph.
+        Set<T> v = new HashSet<>(getVertexes()); // O(1)
+        Set<T> x = new HashSet<>();
+        Graph<T> MST = new PrimGraph<>(comparator);
+        Map<Integer, T> reverseVertices = vertices.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue,Map.Entry::getKey)); //O(n)
+
+        // Initial step: remove first vertex
+        x.add((T)v.remove((T) reverseVertices.get(0)));
+        for (T xVertex : x) {
+            int idx = vertices.get(x);
+            int[] row = costMatrix[idx];
+            for (int i = 0; i < row.length; i++) {
+                if (costMatrix[idx] != -1)
+            }
+        }
+
+        //        for (int i = 0; i < v.size(); i++) {
+//            //if(x.size() == vertices.size()) break;
+//            for (T vertex : x) {
+//                int idx = vertices.get(x);
+//                int[] arrayOfVertex = costMatrix[idx];
+//                // Now, check in the array for the minimum cost
+//                // Get the INDEX of that minimum cost
+//                // Get the vertex which has that index in the matrix
+//                // Check it's present in V
+//            }
+//        }
+
+    }
+
+    private int getMinimumCostEdgeIndex(T v){
+        int row = vertices.get(v);
+        int minPosition = 0;
+        //It is a symmetric matrix, then we can search only in the corresponding row
+        int[] correspondingRow = costMatrix[row];
+        int min = correspondingRow[minPosition];
+        for (int i = 0; i < correspondingRow.length; i++) {
+            int current = correspondingRow[i];
+            if(min<0) continue;
+            if(current <min && (current>0)){
+                min = current;
+                minPosition = i;}
+        }
+        return minPosition; //O(n)
     }
 
 }
