@@ -1,6 +1,7 @@
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 //Implement the Graph interface, using a non-directed and ponderated graph
 //Use a cost Matrix. Calculate each and every operation order (Big "O" notation)
