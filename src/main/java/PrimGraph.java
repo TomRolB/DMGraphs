@@ -171,8 +171,7 @@ public class PrimGraph<T> implements Graph<T>{
         HashSet<T> v = new HashSet<>(List.copyOf(getVertexes()));
         HashSet<T> x = new HashSet<>();
         int index = 0;
-        for (int j = 0; j < 6; j++) {
-            System.out.println("a");
+        while (!v.isEmpty()) {
             T chosenVertex = reversedHashMap.get(index);
             v.remove(chosenVertex);
             x.add(chosenVertex);
