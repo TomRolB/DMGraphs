@@ -170,15 +170,16 @@ public class PrimGraph<T> implements Graph<T>{
         }
         HashSet<T> v = new HashSet<>(List.copyOf(getVertexes()));
         HashSet<T> x = new HashSet<>();
-        int index = 0;
-        while (!v.isEmpty()) {
+
+        int index = 1;
+        while (!v.isEmpty()) { // O(N)
             T chosenVertex = reversedHashMap.get(index);
             v.remove(chosenVertex);
             x.add(chosenVertex);
-            int min = 99999;
-            int departure = 0;
-            int arrival = 0;
-            for (T node : x) {
+            int min = Integer.MAX_VALUE;
+            int departure = 0; // row index
+            int arrival = 0; // column index
+            for (T node : x) { //O(N)
                 int row = vertices.get(node);
                 for (int i = 0; i < N; i++) {
                     if (costMatrix[row][i] < min && i != row && !x.contains(reversedHashMap.get(i))) {

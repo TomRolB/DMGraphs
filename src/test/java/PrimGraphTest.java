@@ -222,4 +222,35 @@ class PrimGraphTest {
         assertTrue(MST.hasEdge("3","5"));
     }
 
+    @Test
+    void primTest2() {
+        pg.addVertex("A");
+        pg.addVertex("B");
+        pg.addVertex("C");
+        pg.addVertex("D");
+        pg.addVertex("E");
+        pg.addVertex("F");
+
+        pg.addEdge("C", "A", 1);
+        pg.addEdge("A", "D", 2);
+        pg.addEdge("C", "D", 3);
+        pg.addEdge("A", "B", 4);
+        pg.addEdge("D", "B", 5);
+        pg.addEdge("B", "E", 6);
+        pg.addEdge("D", "E", 7);
+        pg.addEdge("B", "F", 8);
+        pg.addEdge("E", "F", 9);
+
+        Graph<String> MST = pg.prim();
+        assertEquals(pg.order(), MST.order());
+
+        assertTrue(MST.hasEdge("C","A"));
+        assertTrue(MST.hasEdge("A","D"));
+        assertTrue(MST.hasEdge("A","B"));
+        assertTrue(MST.hasEdge("B","E"));
+        assertTrue(MST.hasEdge("B","F"));
+
+        assertEquals(MST.alpha(),MST.order()-1);
+    }
+
 }
