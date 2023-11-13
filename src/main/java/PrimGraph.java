@@ -193,7 +193,9 @@ public class PrimGraph<T> implements Graph<T>{
                     }
                 }
             }
-            newGraph.addEdge(reversedHashMap.get(arrival), reversedHashMap.get(departure), min);
+            if (!v.isEmpty()) {
+                newGraph.addEdge(reversedHashMap.get(arrival), reversedHashMap.get(departure), min);
+            }
         }
         return newGraph;
     } //O(N^3)
