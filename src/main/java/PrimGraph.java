@@ -1,6 +1,7 @@
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 //Implement the Graph interface, using a non-directed and ponderated graph
 //Use a cost Matrix. Calculate each and every operation order (Big "O" notation)
@@ -16,13 +17,21 @@ public class PrimGraph<T> implements Graph<T>{
         this.comparator = comparator;
         this.size = 10;
         this.costMatrix = new int[size][size];
+        fillGraph(size);
     }
     public PrimGraph(@NotNull Comparator<T> comparator, int size){
         this.comparator = comparator;
         this.size = size;
         this.costMatrix = new int[size][size];
+        fillGraph(size);
     }
-    //Edges should have values greater than or equal to 0, so we use -1 to represent that there is no edge between v and w
+
+    private void fillGraph(int size) {
+        for (int i = 0; i < size; i++) {
+            Arrays.fill(costMatrix[i], 2147483647 );
+        }
+    }
+    //Edges should have values greater than or equal to 0, so we use 2147483647 to represent that there is no edge between v and w
     private Map<T,Integer> vertices = new HashMap<>();//Map with pairs of vertices and indices
     private int N = 0; //Vertices amount
     private int alpha = 0;//Edges amount
@@ -67,7 +76,7 @@ public class PrimGraph<T> implements Graph<T>{
     public void removeEdge(T v, T w) {
         if(!vertices.containsKey(v) || !vertices.containsKey(w) || !hasEdge(v,w)) return;
         int i = vertices.get(v), j = vertices.get(w);
-        costMatrix[i][j] = costMatrix[j][i] = -1; //Change costMatrix values in it.
+        costMatrix[i][j] = costMatrix[j][i] = 2147483647; //Change costMatrix values in it.
         alpha--;
     } //O(1)
 
@@ -76,7 +85,7 @@ public class PrimGraph<T> implements Graph<T>{
     public boolean hasEdge(T v, T w) {
         if(!vertices.containsKey(v) || !vertices.containsKey(w)) return false;
         int i = vertices.get(v), j = vertices.get(w);
-        return costMatrix[i][j] == costMatrix[j][i] && costMatrix[i][j] >=0;
+        return costMatrix[i][j] == costMatrix[j][i] && costMatrix[i][j] >=0 && costMatrix[i][j] != 2147483647;
     } // O(1)
 
     @Override
@@ -121,11 +130,11 @@ public class PrimGraph<T> implements Graph<T>{
         int currentRow = 0;
         int currentCol;
         for (int i = 0; i < size; i++) {
-            if (costMatrix[0][i] == -1) continue;
+            if (costMatrix[0][i] == 2147483647) continue;
             currentCol = 0;
 
             for (int j = 0; j < size; j++) {
-                if (costMatrix[i][j] == -1) continue;
+                if (costMatrix[i][j] == 2147483647) continue;
                 result[currentRow][currentCol] = costMatrix[i][j];
                 currentCol++;
             }
@@ -149,11 +158,42 @@ public class PrimGraph<T> implements Graph<T>{
     private void removeAllEdges(T x) {
         int i = vertices.get(x);
         for (int j = 0; j < costMatrix.length; j++) {
-            costMatrix[i][j] = costMatrix[j][i] = -1;
+            costMatrix[i][j] = costMatrix[j][i] = 2147483647;
         }
     }
 
-
+    public PrimGraph<T> prim () {
+        PrimGraph<T> newGraph = new PrimGraph<>(this.comparator, costMatrix.length);
+        Map<Integer, T> reversedHashMap = vertices.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue,Map.Entry::getKey));
+        for (int i= 0; i < N; i++) {
+            newGraph.addVertex(reversedHashMap.get(i));
+        }
+        HashSet<T> v = new HashSet<>(List.copyOf(getVertexes()));
+        HashSet<T> x = new HashSet<>();
+        int index = 0;
+        for (int j = 0; j < 6; j++) {
+            System.out.println("a");
+            T chosenVertex = reversedHashMap.get(index);
+            v.remove(chosenVertex);
+            x.add(chosenVertex);
+            int min = 99999;
+            int departure = 0;
+            int arrival = 0;
+            for (T node : x) {
+                int row = vertices.get(node);
+                for (int i = 0; i < N; i++) {
+                    if (costMatrix[row][i] < min && i != row && !x.contains(reversedHashMap.get(i))) {
+                        departure = row;
+                        arrival = i;
+                        min = costMatrix[row][i];
+                        index = i;
+                    }
+                }
+            }
+            newGraph.addEdge(reversedHashMap.get(arrival), reversedHashMap.get(departure), min);
+        }
+        return newGraph;
+    }
 
     private class IndexComparator implements Comparator<T> {
         @Override
